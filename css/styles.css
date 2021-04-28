@@ -148,6 +148,51 @@
       animation-duration: 1s;
 }
 
+.pointer-left {
+
+      width: 20px;
+      height: 20px;
+      margin: 0px;
+
+      position: absolute;
+      transform: rotate(135deg);
+}
+
+.pointer-left-center {
+
+      width: 15px;
+      height: 20px;
+      margin: 0px;
+
+      position: absolute;
+
+
+      transform: rotate(130deg);
+}
+
+.pointer-right {
+
+      width: 20px;
+      height: 20px;
+      margin: 0px;
+
+      position: absolute;
+      
+      transform: rotate(45deg);
+}
+
+.pointer-right-center {
+
+      width: 15px;
+      height: 20px;
+      margin: 0px;
+
+      position: absolute;
+
+      transform: rotate(40deg);
+}
+
+
 @keyframes vibration {
       0%   { transform: translateX(3px); }
 
@@ -161,7 +206,6 @@
 
       100% { transform: translateX(-2px); }
 } 
-
 
 /*=======================MEDIA QUERY=======================*/
 

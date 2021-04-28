@@ -7,84 +7,108 @@ Object.freeze(tours);
 const properties  = {
     pos: {},
     dirs: [],
-    dir: '',
 };
 
 let offsetX = 0;
 let offsetY = 0;
 let offsetX_center = 0;
-let offsetY_center = 0;
 
-const set_offset = (x, y, x_center, y_center) => {
+const set_offset = (x, y, x_center) => {
     
     offsetX = x;
     offsetY = y;
     offsetX_center = x_center;
-    offsetY_center = y_center;
+}
+
+const set_nodepos = (_x, _y, elm) => {
+
+    let x = properties.pos.left + _x; 
+    let y = properties.pos.top + _y; 
+
+    elm.style.left = x + 'px';
+    elm.style.top = y + 'px';
 }
 
 class Node {
 
     constructor(item) {
+
         this.item = item;
         this.right = this.left = null;
-        this.elm = null;
+        this.elm = this.imgleft = this.imgright = null;
+        this.inicialieze();
     }
     
     inicialieze() {
 
+        //create DOM elements
         this.elm = document.createElement('div');
         this.elm.className = 'node';
         this.elm.textContent = this.item;
-        
+
+        this.imgleft = new Image();
+        this.imgleft.src = './images/pointer.png';
+        this.imgright = new Image();
+        this.imgright.src = './images/pointer.png';
+
+        this.imgleft.className = 'pointer-left';
+        this.imgright.className = 'pointer-right';
+
         console.log(properties);
+    }
 
-        if(properties.dir === 'left') {
 
-            if(properties.dirs.includes('right')) {
+    draw() {
 
-                let x = properties.pos.left - offsetX_center; 
-                let y = properties.pos.top + offsetY; 
+        this.node_pos();
+        tree.appendChild(this.elm);
+        
+        this.img_pos(this.elm.getBoundingClientRect());
+        tree.appendChild(this.imgleft);
+        tree.appendChild(this.imgright);
+    }
 
-                this.elm.style.left = x + 'px';
-                this.elm.style.top = y + 'px';
-            } else {
+    node_pos() {
 
-                let x = properties.pos.left - offsetX; 
-                let y = properties.pos.top + offsetY; 
-                console.log(x,y);
-    
-                this.elm.style.left = x + 'px';
-                this.elm.style.top = y + 'px';
-            }
+        if(properties.dirs[properties.dirs.length - 1] === 'left') {
 
-        } else if(properties.dir === 'right') {
+            if(properties.dirs.includes('right'))
+                set_nodepos(-offsetX_center, offsetY, this.elm);
 
-            if(properties.dirs.includes('left')) {
-                
-                let x = properties.pos.left + offsetX_center; 
-                let y = properties.pos.top + offsetY; 
-                this.elm.style.left = x + 'px';
-                this.elm.style.top = y + 'px';
-            } else {
-                
-                let x = properties.pos.left + offsetX; 
-                let y = properties.pos.top + offsetY;
-                console.log(x,y);
-    
-                this.elm.style.left = x + 'px';
-                this.elm.style.top = y + 'px';
-            }
+            else 
+                set_nodepos(-offsetX, offsetY, this.elm);
+            
+        } else {
+
+            if(properties.dirs.includes('left')) 
+                set_nodepos(offsetX_center, offsetY, this.elm);
+
+            else 
+                set_nodepos(offsetX, offsetY, this.elm);
+            
         } 
 
         properties.dirs = [];
     }
+
+    img_pos(pos) {
+        
+        // pointer left
+        this.imgleft.style.left = pos.left - (pos.width / 2) + 'px';
+        this.imgleft.style.top = pos.top + pos.height - 10 + 'px';
+
+        // pointer right
+        this.imgright.style.left = pos.left + pos.width + 'px';
+        this.imgright.style.top = pos.top + pos.height - 10 + 'px';
+    }
+
 }
 
 
 class BST { 
     
     constructor() {
+        
         this.len = 0;
         this.root = null;
     }
@@ -93,20 +117,18 @@ class BST {
         if(!node) {
 
             node = new Node(item);
-            node.inicialieze();
+            node.draw();
 
-            tree.appendChild(node.elm);
         } else if(item < node.item) {
             
             properties.pos = node.elm.getBoundingClientRect();
-            properties.dir = 'left';
             properties.dirs.push('left');
 
             node.left = this.insert(node.left, item);
+
         } else {
 
             properties.pos = node.elm.getBoundingClientRect();
-            properties.dir = 'right';
             properties.dirs.push('right');
 
             node.right = this.insert(node.right, item);
@@ -116,10 +138,18 @@ class BST {
     }
 
     search(node, item) {
-        if(!node) return null;
-        else if(node.item === item) return node;
-        else if(item < node.item) return this.search(node.left, item);
-        else return this.search(node.right, item);
+
+        if(!node) 
+            return null;
+
+        else if(node.item === item) 
+            return node;
+
+        else if(item < node.item) 
+            return this.search(node.left, item);
+
+        else    
+            return this.search(node.right, item);
     }
 
     remove(node, item) {
@@ -160,6 +190,7 @@ class BST {
     }
 
     minVal(node) {
+
         let current = node;
 
         while(current.left) current = current.left;
@@ -168,6 +199,7 @@ class BST {
     }
 
     clear_all(node) {
+
         if(!node) return;
 
         this.clear_all(node.left);
@@ -203,24 +235,24 @@ class BST {
     Insert(item) {       
 
         if(this.Search(item)) 
-            return null;
+            return false;
         
-        let res = null;
+        let res = false;
 
         if(!this.root) {
 
             this.root = new Node(item);
-            this.root.inicialieze();
 
-            tree.appendChild(this.root.elm);
-            res = this.root;
+            this.root.draw();
+
+            res = Boolean(this.root);
         } else {
 
-            properties.rootdir = (this.root.item < item) ? 'right' : 'left';
-            res = this.insert(this.root, item);
+            res = Boolean(this.insert(this.root, item));
         }
 
         ++this.len;
+
         return res; 
     }
 
