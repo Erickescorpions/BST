@@ -20,15 +20,6 @@ const set_offset = (x, y, x_center) => {
     offsetX_center = x_center;
 }
 
-const set_nodepos = (_x, _y, elm) => {
-
-    let x = properties.pos.left + _x; 
-    let y = properties.pos.top + _y; 
-
-    elm.style.left = x + 'px';
-    elm.style.top = y + 'px';
-}
-
 class Node {
 
     constructor(item) {
@@ -60,38 +51,47 @@ class Node {
 
     draw() {
 
-        this.node_pos();
+        this.set_nodepos();
         tree.appendChild(this.elm);
         
-        this.img_pos(this.elm.getBoundingClientRect());
+        this.set_imgpos(this.elm.getBoundingClientRect());
         tree.appendChild(this.imgleft);
         tree.appendChild(this.imgright);
     }
 
-    node_pos() {
+    set_nodepos() {
 
         if(properties.dirs[properties.dirs.length - 1] === 'left') {
 
             if(properties.dirs.includes('right'))
-                set_nodepos(-offsetX_center, offsetY, this.elm);
+                this.nodepos(-offsetX_center, offsetY);
 
             else 
-                set_nodepos(-offsetX, offsetY, this.elm);
+                this.nodepos(-offsetX, offsetY);
             
         } else {
 
             if(properties.dirs.includes('left')) 
-                set_nodepos(offsetX_center, offsetY, this.elm);
+                this.nodepos(offsetX_center, offsetY);
 
             else 
-                set_nodepos(offsetX, offsetY, this.elm);
+                this.nodepos(offsetX, offsetY);
             
         } 
 
         properties.dirs = [];
     }
 
-    img_pos(pos) {
+    nodepos(_x, _y) {
+
+        let x = properties.pos.left + _x; 
+        let y = properties.pos.top + _y; 
+    
+        this.elm.style.left = x + 'px';
+        this.elm.style.top = y + 'px';
+    }
+
+    set_imgpos(pos) {
         
         // pointer left
         this.imgleft.style.left = pos.left - (pos.width / 2) + 'px';
@@ -311,3 +311,6 @@ class BST {
         return this.len == 0;
     }
 }
+
+export {BST};
+export {set_offset};

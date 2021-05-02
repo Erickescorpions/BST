@@ -1,5 +1,7 @@
-// get Elements
+// imports 
+import {BST, set_offset} from './BST.js';
 
+// GET DOM elements
 
 // insert
 const insert_btn = document.getElementById('insert-btn');
@@ -33,17 +35,17 @@ const tree = document.getElementById('tree');
 // BST
 const bst = new BST();
 
-// establish the space beetween nodes 
+// establish space beetween nodes 
 const width = tree.getBoundingClientRect().width;
 
 if(width > 1120)
     set_offset(90, 50, 60);
+
 else if(width > 830) 
     set_offset(70, 50, 40);
+
 else 
     set_offset(60, 50, 30);
-
-
 
 
 // events
