@@ -3,7 +3,6 @@
       <head>
             <title>BST Visualization</title>
             <link rel="stylesheet" type="text/css" href="css/styles.css">
-            <script type="module" src="./scripts/main.js"></script>
       </head>
       
       <body>     
@@ -11,7 +10,11 @@
                   <h1>BST Visualization</h1>
             </div>
             
-            <div id="tree"> </div>
+            <div id="tree"> 
+
+                  <!--<img src="./images/pointerL.png" class="pointer-left" alt="">
+                  <img src="./images/pointerR.png" class="pointer-right" alt="">-->
+            </div>
             
             <div id="error-msg"> </div>
 
@@ -21,13 +24,6 @@
                         <div class="container">
                               <input type="number" placeholder="value to insert" id="insert-input" required>
                               <button class="button-style" id="insert-btn">Insert</button>
-                        </div>
-                  </div>
-                  <div id="search">
-                        
-                        <div class="container">
-                              <input type="number" placeholder="value to search" id="search-input" required>
-                              <button class="button-style" id="search-btn">Search</button>
                         </div>
                   </div>
                   <div id="remove">
@@ -53,6 +49,8 @@
                   </div>
             </section>
 
-            
+            <script src="./scripts/BST.js"></script>            
+            <script src="./scripts/Node.js"></script>
+            <script src="./scripts/main.js"></script>
       </body>
 </html>

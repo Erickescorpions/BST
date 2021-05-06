@@ -9,102 +9,6 @@ const properties  = {
     dirs: [],
 };
 
-let offsetX = 0;
-let offsetY = 0;
-let offsetX_center = 0;
-
-const set_offset = (x, y, x_center) => {
-    
-    offsetX = x;
-    offsetY = y;
-    offsetX_center = x_center;
-}
-
-class Node {
-
-    constructor(item) {
-
-        this.item = item;
-        this.right = this.left = null;
-        this.elm = this.imgleft = this.imgright = null;
-        this.inicialieze();
-    }
-    
-    inicialieze() {
-
-        //create DOM elements
-        this.elm = document.createElement('div');
-        this.elm.className = 'node';
-        this.elm.textContent = this.item;
-
-        this.imgleft = new Image();
-        this.imgleft.src = './images/pointer.png';
-        this.imgright = new Image();
-        this.imgright.src = './images/pointer.png';
-
-        this.imgleft.className = 'pointer-left';
-        this.imgright.className = 'pointer-right';
-
-        console.log(properties);
-    }
-
-
-    draw() {
-
-        this.set_nodepos();
-        tree.appendChild(this.elm);
-        
-        this.set_imgpos(this.elm.getBoundingClientRect());
-        tree.appendChild(this.imgleft);
-        tree.appendChild(this.imgright);
-    }
-
-    set_nodepos() {
-
-        if(properties.dirs[properties.dirs.length - 1] === 'left') {
-
-            if(properties.dirs.includes('right'))
-                this.nodepos(-offsetX_center, offsetY);
-
-            else 
-                this.nodepos(-offsetX, offsetY);
-            
-        } else {
-
-            if(properties.dirs.includes('left')) 
-                this.nodepos(offsetX_center, offsetY);
-
-            else 
-                this.nodepos(offsetX, offsetY);
-            
-        } 
-
-        properties.dirs = [];
-    }
-
-    nodepos(_x, _y) {
-
-        let x = properties.pos.left + _x; 
-        let y = properties.pos.top + _y; 
-    
-        this.elm.style.left = x + 'px';
-        this.elm.style.top = y + 'px';
-    }
-
-    set_imgpos(pos) {
-        
-        // pointer left
-        this.imgleft.style.left = pos.left - (pos.width / 2) + 'px';
-        this.imgleft.style.top = pos.top + pos.height - 10 + 'px';
-
-        // pointer right
-        this.imgright.style.left = pos.left + pos.width + 'px';
-        this.imgright.style.top = pos.top + pos.height - 10 + 'px';
-    }
-
-}
-
-
 class BST { 
     
     constructor() {
@@ -112,44 +16,81 @@ class BST {
         this.len = 0;
         this.root = null;
     }
+    
+    insert(node, item, pastnode=null) {
 
-    insert(node, item) {
         if(!node) {
 
             node = new Node(item);
-            node.draw();
+            node.draw(pastnode);
 
         } else if(item < node.item) {
             
             properties.pos = node.elm.getBoundingClientRect();
             properties.dirs.push('left');
 
-            node.left = this.insert(node.left, item);
+            let time = node.animate('left');
 
+            setTimeout( () => node.left = this.insert(node.left, item, node) , time);
+            
         } else {
-
+            
             properties.pos = node.elm.getBoundingClientRect();
             properties.dirs.push('right');
+            
+            let time = node.animate('right');
 
-            node.right = this.insert(node.right, item);
+            setTimeout( () => node.right = this.insert(node.right, item, node) , time);
         } 
-
+        
         return node;
+    }
+    
+    Insert(item) {       
+    
+        // Do not want duplicates
+        if(this.Search(item)) return false;
+        
+        let res = false;
+    
+        if(!this.root) {
+    
+            this.root = new Node(item);
+    
+            this.root.draw();
+    
+            res = Boolean(this.root);
+
+        } else {
+    
+            res = Boolean(this.insert(this.root, item));
+        }
+    
+        ++this.len;
+    
+        return res; 
     }
 
     search(node, item) {
-
+        
         if(!node) 
             return null;
-
-        else if(node.item === item) 
+        
+        if(node.item === item) 
             return node;
 
-        else if(item < node.item) 
+        else if(item < node.item)
             return this.search(node.left, item);
 
-        else    
+        else
             return this.search(node.right, item);
+
+    }
+    
+    Search(item) {
+
+        if(!this.root) return false;
+        return Boolean(this.search(this.root, item));
     }
 
     remove(node, item) {
@@ -157,7 +98,7 @@ class BST {
         else if(item < node.item) node.left = this.remove(node.left, item);
         else if(node.item < item) node.right = this.remove(node.right, item);
         else {
-
+            
             // we used this tmp variable to save a possible leaf of a node
             let tmp = null;
 
@@ -232,34 +173,7 @@ class BST {
         }
     }
 
-    Insert(item) {       
 
-        if(this.Search(item)) 
-            return false;
-        
-        let res = false;
-
-        if(!this.root) {
-
-            this.root = new Node(item);
-
-            this.root.draw();
-
-            res = Boolean(this.root);
-        } else {
-
-            res = Boolean(this.insert(this.root, item));
-        }
-
-        ++this.len;
-
-        return res; 
-    }
-
-    Search(item) {
-        if(!this.root) return false;
-        return Boolean(this.search(this.root, item));
-    }
 
     Remove(item) {
 
@@ -311,6 +225,3 @@ class BST {
         return this.len == 0;
     }
 }
-
-export {BST};
-export {set_offset};

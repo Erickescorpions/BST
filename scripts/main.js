@@ -1,6 +1,3 @@
-// imports 
-import {BST, set_offset} from './BST.js';
-
 // GET DOM elements
 
 // insert
@@ -35,17 +32,21 @@ const tree = document.getElementById('tree');
 // BST
 const bst = new BST();
 
+
+
 // establish space beetween nodes 
 const width = tree.getBoundingClientRect().width;
 
 if(width > 1120)
-    set_offset(90, 50, 60);
+    set_offset(90, 70, 60);
 
 else if(width > 830) 
-    set_offset(70, 50, 40);
+    set_offset(70, 60, 40);
 
 else 
-    set_offset(60, 50, 30);
+    set_offset(60, 40, 30);
+
+
 
 
 // events
@@ -53,23 +54,18 @@ else
 const empty_tree_msg = () => {
 
     error_msg.innerHTML = 'tree empty';
-    setTimeout( () => {
-        error_msg.innerHTML= '';
-    }, 1000 * 5);
+    setTimeout( () => error_msg.innerHTML= '' , 1000 * 5);
 }
-
 
 insert_btn.onclick = () => {
 
     if(!bst.Insert(Number(insert_input.value))) {
-        error_msg.innerHTML = 'duplicate values, error when inserting';
-        setTimeout(() => {
 
-            error_msg.innerHTML = '';
-        }, 1000 * 5);
+        error_msg.innerHTML = 'duplicate values, error when inserting';
+
+        setTimeout( () => error_msg.innerHTML = '' , 1000 * 5);
     }
 }
-
 
 remove_btn.onclick = () => {
 
@@ -130,7 +126,7 @@ post_order_btn.onclick = () => {
 search_btn.onclick = () => {
     if(bst.isEmpty()) {
         empty_tree_msg();
-    } else if(!bst.Search(search_input.value)) {
+    } else if(!bst.Search(Number(search_input.value))) {
         error_msg.innerHTML = 'value not found';
         setTimeout( () => {
             error_msg.innerHTML= '';

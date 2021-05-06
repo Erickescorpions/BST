@@ -31,7 +31,7 @@
 
       color: black;
       position: relative;
-      
+
       display: flex;
       justify-content: space-around;
       text-align: center;
@@ -59,6 +59,7 @@
 }      
 
 .button-style {
+
       height: 30px; 
       width: 150px;
       background-color: white;
@@ -128,7 +129,8 @@
       border-radius: 50%;
       width: 50px;
       height: 50px;
-      background: linear-gradient(30deg, aquamarine, white);
+      background: linear-gradient(30deg, rgb(46, 240, 7), #5DC1B9);
+      font-weight: bold;
 
       position: absolute;
       
@@ -140,72 +142,32 @@
       flex-direction: column;
       align-items: center;
 
-      margin: 0px;
-
-
-      animation-name: vibration;
+      animation-name: null;
       animation-timing-function: ease-out;
       animation-duration: 1s;
 }
 
-.pointer-left {
+.pointer {
 
-      width: 20px;
+      width: 30px;
       height: 20px;
       margin: 0px;
 
       position: absolute;
-      transform: rotate(135deg);
+      z-index: 1;
+
+      animation-name: null;
+      animation-timing-function: ease-out;
+      animation-duration: 1s;
 }
 
-.pointer-left-center {
-
-      width: 15px;
-      height: 20px;
-      margin: 0px;
-
-      position: absolute;
-
-
-      transform: rotate(130deg);
+@keyframes enlarge {
+      50% {
+            -webkit-transform: scale(1.3);
+            transform: scale(1.3);
+      }
 }
 
-.pointer-right {
-
-      width: 20px;
-      height: 20px;
-      margin: 0px;
-
-      position: absolute;
-      
-      transform: rotate(45deg);
-}
-
-.pointer-right-center {
-
-      width: 15px;
-      height: 20px;
-      margin: 0px;
-
-      position: absolute;
-
-      transform: rotate(40deg);
-}
-
-
-@keyframes vibration {
-      0%   { transform: translateX(3px); }
-
-      20%  { transform: translateX(-3px); }
-
-      40%  { transform: translateX(-3px); }
-
-      60%  { transform: translateX(3px); }
-
-      80%  { transform: translateX(3px); }
-
-      100% { transform: translateX(-2px); }
-} 
 
 /*=======================MEDIA QUERY=======================*/
 
@@ -218,6 +180,12 @@
 
       #tools {
             flex-wrap: wrap;
+      }
+
+      .pointer {
+
+            width: 20px;
+            height: 20px;
       }
 }
 
