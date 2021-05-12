@@ -3,11 +3,8 @@
 const tours = {"PRE_ORDER": 0, "IN_ORDER": 1, "POST_ORDER": 2};
 Object.freeze(tours);
 
-// Save some important data from a DOM object
-const properties  = {
-    pos: {},
-    dirs: [],
-};
+let aux_dirs = [];
+let aux_dirs_rem = [];
 
 class BST { 
     
@@ -21,25 +18,20 @@ class BST {
 
         if(!node) {
 
-            node = new Node(item);
+            node = new Node(item, [...aux_dirs]);
             node.draw(pastnode);
+            aux_dirs = [];
 
         } else if(item < node.item) {
-            
-            properties.pos = node.elm.getBoundingClientRect();
-            properties.dirs.push('left');
 
+            aux_dirs.push('left');
             let time = node.animate('left');
-
             setTimeout( () => node.left = this.insert(node.left, item, node) , time);
             
         } else {
-            
-            properties.pos = node.elm.getBoundingClientRect();
-            properties.dirs.push('right');
-            
-            let time = node.animate('right');
 
+            aux_dirs.push('right');
+            let time = node.animate('right');
             setTimeout( () => node.right = this.insert(node.right, item, node) , time);
         } 
         
@@ -55,10 +47,8 @@ class BST {
     
         if(!this.root) {
     
-            this.root = new Node(item);
-    
+            this.root = new Node(item, []);
             this.root.draw();
-    
             res = Boolean(this.root);
 
         } else {
@@ -93,67 +83,101 @@ class BST {
         return Boolean(this.search(this.root, item));
     }
 
-    remove(node, item) {
+    remove(node, item, pastnode) {
+        
         if(!node) return null;
-        else if(item < node.item) node.left = this.remove(node.left, item);
-        else if(node.item < item) node.right = this.remove(node.right, item);
-        else {
+
+        if(item < node.item) {
+
+            let time = node.animate('left');
+            setTimeout( () => node.left = this.remove(node.left, item, node) , time);
+        
+        } else if(node.item < item) {
+            
+            let time = node.animate('right');
+            setTimeout( () => node.right = this.remove(node.right, item, node), time);
+
+        } else {
             
             // we used this tmp variable to save a possible leaf of a node
             let tmp = null;
 
             // if the node only has one leaf 
             if(!node.left) {
+                
                 tmp = node.right;
-                node = null;
+
+                node.remove('right', pastnode);
+
+                node = node.right = node.left = null;
                 return tmp;
 
             } else if (!node.right) {
+                
                 tmp = node.left;
-                node = null;
+
+                node.remove('left', pastnode);
+
+                node = node.right = node.left = null;
                 return tmp;
-            } 
-            
+                
             // if the node has two leaves
-            else {
+            } else {
 
                 // in this case we use the following algorithm to choose the correct substitute
                 tmp = this.minVal(node.right);
-
+                
                 node.item = tmp.item;
-                node.right = this.remove(node.right, tmp.item);
+                node.right = this.remove(node.right, tmp.item, node);
+
             }
-
-            --this.len;
         }
-
+        
         return node;
     }
-
+    
     minVal(node) {
-
+        
         let current = node;
-
+        
         while(current.left) current = current.left;
-
+        
         return current;
     }
+    
+    Remove(item) {
+
+        if(!this.root) return false;
+        if(!this.Search(item)) return false;
+        
+        let res = Boolean(this.remove(this.root, item));
+        
+        --this.len;
+    
+        return res;
+    }
+
 
     clear_all(node) {
-
+        
         if(!node) return;
-
+        
         this.clear_all(node.left);
         this.clear_all(node.right);
-
+        
         node = null;
     }
 
     pre_order(node, f) {
         if(node) {
             f(node.item);
+
+            let time = node.animate('left');
             this.pre_order(node.left, f);
+
+            time = node.animate('right');
             this.pre_order(node.right, f);
+            
         }
     }
 
@@ -167,25 +191,10 @@ class BST {
 
     post_order(node, f) {
         if(node) {
-            this.post_order(node.left, f);
-            this.post_order(node.right, f);
+            pastnode.post_order(node.left, f);
+            pastnode.post_order(node.right, f);
             f(node.item);
         }
-    }
-
-
-
-    Remove(item) {
-
-        if(!this.Search(item)) {
-            return null;
-        }
-
-        if(!this.root) return false;
-        let res = this.remove(this.root, item);
-        --this.len;
-    
-        return res;
     }
 
     Delete() {
@@ -215,7 +224,7 @@ class BST {
                     break;
                 case tours.POST_ORDER:
                     console.log("postorder");
-                    this.post_order(this.root, f);
+                    pastnode.post_order(this.root, f);
                     break;
             }
         } 

@@ -4,10 +4,6 @@
 const insert_btn = document.getElementById('insert-btn');
 const insert_input = document.getElementById('insert-input');
 
-// search
-const search_btn = document.getElementById('search-btn');
-const search_input = document.getElementById('search-input');
-
 // remove
 const remove_btn = document.getElementById('remove-btn');
 const remove_input = document.getElementById('remove-input');
@@ -71,7 +67,7 @@ remove_btn.onclick = () => {
 
     if(bst.isEmpty()) {
         empty_tree_msg();
-    } else if(!bst.Remove(remove_input.value)) {
+    } else if(!bst.Remove(Number(remove_input.value))) {
         error_msg.innerHTML = 'value not found';
         setTimeout( () => {
             error_msg.innerHTML= '';
@@ -119,17 +115,5 @@ post_order_btn.onclick = () => {
         bst.Traverse(tours.POST_ORDER, (item) => {
             console.log(item);
         });
-    }
-}
-
-
-search_btn.onclick = () => {
-    if(bst.isEmpty()) {
-        empty_tree_msg();
-    } else if(!bst.Search(Number(search_input.value))) {
-        error_msg.innerHTML = 'value not found';
-        setTimeout( () => {
-            error_msg.innerHTML= '';
-        }, 1000 * 5);
     }
 }
