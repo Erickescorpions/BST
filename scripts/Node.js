@@ -204,7 +204,7 @@ class Node {
             }, 1000);
 
         } else {
-            24
+
             this.elm.style.animationName = 'enlarge';
             setTimeout( () => this.elm.style.animationName = null , 1000);
 
@@ -216,6 +216,7 @@ class Node {
 
     remove(dir, pastnode) {
  
+        console.log(`a eliminar nodo: ${this.item}`);
         this.elm.style.animationName = 'poof';
         this.elm.style.animationFillMode = 'forwards';
 
@@ -263,12 +264,13 @@ class Node {
 
         if(!n) return;
 
+        n.dirs = [...pastnode.dirs, dir];
+
+        console.log(n.dirs);
         console.log(`entra nodo con valor: ${n.item}`);
         console.log(`entra junto con ppn ${pastnode.item} ${pastnode.pos}`);
 
         let pos = n.set_nodepos(pastnode);
-
-
 
         if(dir === 'left') {
 
