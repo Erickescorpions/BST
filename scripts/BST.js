@@ -125,11 +125,21 @@ class BST {
             } else {
 
                 // in this case we use the following algorithm to choose the correct substitute
-                tmp = this.minVal(node.right);
+                const tmp = this.minVal(node.right);
                 
+                let aux = node.item;
                 node.item = tmp.item;
-                node.right = this.remove(node.right, tmp.item, node);
+                tmp.item = aux.item;
 
+                node.elm.textContent = node.item;
+                tmp.elm.textContent = tmp.item;
+
+                tmp.imgright = node.imgright;
+
+                //no borra la imagen del puntero porque no estoy eliminando ese nodo si no el que se selecciono con el algoritmo 
+
+
+                node.right = this.remove(node.right, node.item, node);
             }
         }
         
