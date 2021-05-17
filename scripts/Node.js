@@ -58,7 +58,7 @@ class Node {
         if(this.dirs[this.dirs.length - 1] === 'left') {
 
             this.set_imgpos('left', pos, pastnode)
-                .then((res) => {
+                .then(() => {
 
                     pastnode.imgleft.style.animationName = 'enlarge'; 
                     tree.appendChild(pastnode.imgleft);
@@ -68,13 +68,12 @@ class Node {
         } else {
 
             this.set_imgpos('right', pos, pastnode)
-                .then((res) => {
+                .then(() => {
 
                     pastnode.imgright.style.animationName = "enlarge"; 
                     tree.appendChild(pastnode.imgright);
                     setTimeout( () => pastnode.imgright.style.animationName = null , 1000);
                 });
-
         }
 
         this.elm.style.animationName = 'enlarge';
@@ -175,9 +174,7 @@ class Node {
                 pastnode.imgright.style.top = y1 + 'px';
             }
 
-            resolve({
-                res: true,
-            });
+            resolve();
         });
     }
 
@@ -216,77 +213,77 @@ class Node {
 
     remove(dir, pastnode) {
  
-        console.log(`a eliminar nodo: ${this.item}`);
         this.elm.style.animationName = 'poof';
         this.elm.style.animationFillMode = 'forwards';
 
-        if(dir === 'left') {
+        if(!pastnode) {
+
+
+            
+        }
+
+        if(dir === 'left' && this.left) {
 
             this.imgleft.style.animationName = 'poof';
             this.imgleft.style.animationFillMode = 'forwards';
 
-            //call to method that change the position of the child
+            //dir = this.right.item < pastnode.item ? 'right' : 'left';
 
-            dir = this.right.item < pastnode.item ? 'right' : 'left';
+            this.animate_remove(this.left, pastnode, dir)
+                .then( () => {
+                    console.log('removiendo los elementos');
+                    document.getElementById(`node${this.item}`).remove();
+                    document.getElementById(`pointerL${this.item}`).remove();
+                });
 
-            this.animate_remove(this.left, pastnode, dir);
-
-            setTimeout( () => {
-                document.getElementById(`node${this.item}`).remove();
-                document.getElementById(`pointerL${this.item}`).remove();
-            } , 1000 * 5);
-
-        } else {
+        } else if(dir ==  'right' && this.right) {
 
             this.imgright.style.animationName = 'poof';
             this.imgright.style.animationFillMode = 'forwards';
 
-            //let new_dir = this.right.item > this.item ? 'right': 'left';
+            //dir = this.right.item < pastnode.item ? 'left' : 'right'; 
 
-            dir = this.right.item < pastnode.item ? 'left' : 'right'; 
+            this.animate_remove(this.right, pastnode, dir)
+                .then( (done) => {
+                    
+                    if(done) {
+                        console.log('removiendo los elementos');
+                        document.getElementById(`node${this.item}`).remove();
+                        document.getElementById(`pointerR${this.item}`).remove();
+                    } else { console.error('cannot remove the element, refresh the page');}
+                });
+        } else {
 
-            this.animate_remove(this.right, pastnode, dir);
-
-            setTimeout( () => {
-
-                document.getElementById(`node${this.item}`).remove();
-                document.getElementById(`pointerR${this.item}`).remove();
-            } , 1000 * 5);
+            console.log('caso hoja solita solin solita sola');
+            document.getElementById(`node${this.item}`).remove();
         }
 
-        setTimeout( () => {
-
-            this.elm = this.imgleft = this.imgright = null;
-        }, 1000 * 5);
+        // uneeded(?)
+        //this.elm = this.imgleft = this.imgright = null;
     }
 
     animate_remove(n, pastnode, dir) {
-
-        if(!n) return;
-
-        n.dirs = [...pastnode.dirs, dir];
-
-        console.log(n.dirs);
-        console.log(`entra nodo con valor: ${n.item}`);
-        console.log(`entra junto con ppn ${pastnode.item} ${pastnode.pos}`);
-
-        let pos = n.set_nodepos(pastnode);
-
-        if(dir === 'left') {
-
-            n.set_imgpos('left', pos, pastnode);
-        } else {
-
-            n.set_imgpos('right', pos, pastnode);
-        }
         
-        console.log('past: ', n.pos);
+        return new Promise( (resolve) => {
+            
+            if(!n) resolve(true);
+            
+            n.dirs = this.dirs.slice();
 
-        n.pos = n.elm.getBoundingClientRect();
+            let pos = n.set_nodepos(pastnode);
 
-        console.log('current: ', n.pos);
+            if(dir === 'left') {
 
-        this.animate_remove(n.left, n, 'left');
-        this.animate_remove(n.right, n, 'right');
+                n.set_imgpos('left', pos, pastnode);
+            } else {
+
+                n.set_imgpos('right', pos, pastnode);
+            }
+
+            n.pos = n.elm.getBoundingClientRect();
+
+            n.animate_remove(n.left, this, 'left')
+                .then( (done) => n.animate_remove(n.right, this, 'right') );
+        });
     }
 }
