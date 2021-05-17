@@ -118,5 +118,6 @@ post_order_btn.onclick = () => {
     }
 }
 
-//remove_btn.disabled = true;
+remove_btn.disabled = true;
 delete_btn.disabled = true;
+tours_btn.disabled = true;

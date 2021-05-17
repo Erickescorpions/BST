@@ -83,7 +83,7 @@ class BST {
         return Boolean(this.search(this.root, item));
     }
 
-    remove(node, item, pastnode) {
+    remove(node, item, pastnode=null) {
         
         if(!node) return null;
 
