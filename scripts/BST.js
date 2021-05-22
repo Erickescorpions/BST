@@ -61,112 +61,29 @@ class BST {
         return res; 
     }
 
+    
     search(node, item) {
         
         if(!node) 
             return null;
         
         if(node.item === item) 
-            return node;
-
+        return node;
+        
         else if(item < node.item)
-            return this.search(node.left, item);
-
+        return this.search(node.left, item);
+        
         else
-            return this.search(node.right, item);
-
+        return this.search(node.right, item);
+        
     }
     
     Search(item) {
-
+        
         if(!this.root) return false;
         return Boolean(this.search(this.root, item));
     }
-
-    remove(node, item, pastnode=null) {
-        
-        if(!node) return null;
-
-        if(item < node.item) {
-
-            let time = node.animate('left');
-            setTimeout( () => node.left = this.remove(node.left, item, node) , time);
-        
-        } else if(node.item < item) {
-            
-            let time = node.animate('right');
-            setTimeout( () => node.right = this.remove(node.right, item, node), time);
-
-        } else {
-            
-            // we used this tmp variable to save a possible leaf of a node
-            let tmp = null;
-
-            // if the node only has one leaf 
-            if(!node.left) {
-                
-                tmp = node.right;
-
-                node.remove('right', pastnode);
-
-                node = node.right = node.left = null;
-                return tmp;
-
-            } else if (!node.right) {
-                
-                tmp = node.left;
-
-                node.remove('left', pastnode);
-
-                node = node.right = node.left = null;
-                return tmp;
-                
-            // if the node has two leaves
-            } else {
-
-                // in this case we use the following algorithm to choose the correct substitute
-                const tmp = this.minVal(node.right);
-                
-                let aux = node.item;
-                node.item = tmp.item;
-                tmp.item = aux.item;
-
-                node.elm.textContent = node.item;
-                tmp.elm.textContent = tmp.item;
-
-                tmp.imgright = node.imgright;
-
-                //no borra la imagen del puntero porque no estoy eliminando ese nodo si no el que se selecciono con el algoritmo 
-
-
-                node.right = this.remove(node.right, node.item, node);
-            }
-        }
-        
-        return node;
-    }
     
-    minVal(node) {
-        
-        let current = node;
-        
-        while(current.left) current = current.left;
-        
-        return current;
-    }
-    
-    Remove(item) {
-
-        if(!this.root) return false;
-        if(!this.Search(item)) return false;
-        
-        let res = Boolean(this.remove(this.root, item));
-        
-        --this.len;
-    
-        return res;
-    }
-
 
     clear_all(node) {
         
@@ -176,6 +93,17 @@ class BST {
         this.clear_all(node.right);
         
         node = null;
+    }
+    
+    Delete() {
+        if(!this.root) {
+            console.log("No hay ningun elemento para eliminar");
+            return;
+        }
+
+        this.clear_all(this.root);
+        this.len = 0;
+        this.root = null; 
     }
 
     pre_order(node, f) {
@@ -207,16 +135,6 @@ class BST {
         }
     }
 
-    Delete() {
-        if(!this.root) {
-            console.log("No hay ningun elemento para eliminar");
-            return;
-        }
-
-        this.clear_all(this.root);
-        this.len = 0;
-        this.root = null; 
-    }
 
     Traverse(tour, f) {
         if(this.root) {
